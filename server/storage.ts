@@ -102,9 +102,10 @@ export class MemStorage implements IStorage {
       this.createPlatform(platform);
     });
 
-    // Seed telegram groups - using your personal chat for now
+    // Seed telegram groups - your actual group added
     const telegramGroupsData: InsertTelegramGroup[] = [
-      { name: "SRISAI (Personal)", chatId: "1125296250", memberCount: 1, isActive: true },
+      { name: "Your Deals Group", chatId: "-1002545781041", memberCount: 100, isActive: true },
+      { name: "SRISAI (Personal)", chatId: "1125296250", memberCount: 1, isActive: false },
     ];
 
     telegramGroupsData.forEach(group => {
