@@ -4,7 +4,7 @@ export class TelegramService {
   private botToken: string;
 
   constructor(private storage: IStorage) {
-    this.botToken = process.env.TELEGRAM_BOT_TOKEN || "";
+    this.botToken = process.env.TELEGRAM_BOT_TOKEN || "7665352063:AAEDYPpBq9PAjlftIRlOQvtwfXKfAOPWPiU";
   }
 
   async handleWebhook(update: any): Promise<void> {
