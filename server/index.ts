@@ -67,5 +67,10 @@ app.use((req, res, next) => {
     reusePort: true,
   }, () => {
     log(`serving on port ${port}`);
+    
+    // Start the autonomous affiliate agent
+    setTimeout(async () => {
+      await autonomousAgent.start();
+    }, 2000);
   });
 })();
