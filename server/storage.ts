@@ -88,14 +88,14 @@ export class MemStorage implements IStorage {
   }
 
   private seedData() {
-    // Seed platforms
+    // Seed platforms - Only Amazon active with real affiliate ID
     const platformsData: InsertPlatform[] = [
       { name: "amazon", displayName: "Amazon", icon: "fab fa-amazon", color: "orange-600", isActive: true, status: "active" },
-      { name: "flipkart", displayName: "Flipkart", icon: "fas fa-shopping-cart", color: "blue-600", isActive: true, status: "active" },
-      { name: "zepto", displayName: "Zepto", icon: "fas fa-bolt", color: "purple-600", isActive: true, status: "active" },
-      { name: "swiggy", displayName: "Swiggy", icon: "fas fa-utensils", color: "orange-600", isActive: true, status: "rate_limited" },
-      { name: "zomato", displayName: "Zomato", icon: "fas fa-concierge-bell", color: "red-600", isActive: true, status: "active" },
-      { name: "ajio", displayName: "Ajio", icon: "fas fa-tshirt", color: "pink-600", isActive: true, status: "active" },
+      { name: "flipkart", displayName: "Flipkart", icon: "fas fa-shopping-cart", color: "blue-600", isActive: false, status: "paused" },
+      { name: "zepto", displayName: "Zepto", icon: "fas fa-bolt", color: "purple-600", isActive: false, status: "paused" },
+      { name: "swiggy", displayName: "Swiggy", icon: "fas fa-utensils", color: "orange-600", isActive: false, status: "paused" },
+      { name: "zomato", displayName: "Zomato", icon: "fas fa-concierge-bell", color: "red-600", isActive: false, status: "paused" },
+      { name: "ajio", displayName: "Ajio", icon: "fas fa-tshirt", color: "pink-600", isActive: false, status: "paused" },
     ];
 
     platformsData.forEach(platform => {
