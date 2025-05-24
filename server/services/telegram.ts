@@ -133,10 +133,11 @@ export class TelegramService {
   }
 
   private async notifyOwner(message: string): Promise<void> {
-    const ownerChatId = process.env.OWNER_TELEGRAM_ID;
+    const ownerChatId = process.env.OWNER_TELEGRAM_ID || "1125296250";
     if (ownerChatId && this.botToken) {
       try {
         await this.sendMessage(ownerChatId, `🤖 AGENT UPDATE\n\n${message}`);
+        console.log(`✅ AGENT: Successfully notified owner`);
       } catch (error) {
         console.error(`❌ AGENT: Failed to notify owner:`, error);
       }
