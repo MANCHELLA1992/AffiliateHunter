@@ -134,6 +134,37 @@ export class ScraperService {
     return await this.generateSampleDeals('ajio', 6);
   }
 
+  private generateAffiliateLink(originalUrl: string, platform: string): string {
+    switch (platform) {
+      case 'amazon':
+        const amazonTag = process.env.AMAZON_AFFILIATE_TAG || 'srisaiaffil-21';
+        return `${originalUrl}?tag=${amazonTag}&linkCode=df&hvadid=&hvpos=&hvnetw=g&hvrand=&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=&hvtargid=`;
+        
+      case 'flipkart':
+        const flipkartAffId = process.env.FLIPKART_AFFILIATE_ID || 'srisaiflip';
+        return `${originalUrl}?affid=${flipkartAffId}&affExtParam1=deal_${Date.now()}`;
+        
+      case 'zepto':
+        const zeptoCode = process.env.ZEPTO_REFERRAL_CODE || 'SRISAI2024';
+        return `${originalUrl}?referral=${zeptoCode}&utm_source=affiliate`;
+        
+      case 'swiggy':
+        const swiggyPartner = process.env.SWIGGY_PARTNER_ID || 'SRISAIPARTNER';
+        return `${originalUrl}?partner=${swiggyPartner}&campaign=deals`;
+        
+      case 'zomato':
+        const zomatoAff = process.env.ZOMATO_AFFILIATE_ID || 'SRISAIZOMATO';
+        return `${originalUrl}?zomato_affiliate=${zomatoAff}&ref=deals`;
+        
+      case 'ajio':
+        const ajioAff = process.env.AJIO_AFFILIATE_ID || 'SRISAIAJIO';
+        return `${originalUrl}?affiliate=${ajioAff}&source=deals_bot`;
+        
+      default:
+        return `${originalUrl}?ref=srisai_affiliate&platform=${platform}`;
+    }
+  }
+
   private async generateSampleDeals(platformName: string, platformId: number): Promise<InsertDeal[]> {
     const dealTemplates = {
       amazon: [
@@ -177,14 +208,16 @@ export class ScraperService {
       const salePrice = originalPrice * (1 - template.discount / 100);
       const trackingId = process.env.AFFILIATE_TRACKING_ID || 'your_tracking_id';
       
+      const productUrl = `https://${platformName}.com/product/${Math.random().toString(36).substr(2, 9)}`;
+      
       return {
         title: template.title,
         description: `Great deal on ${template.title} with ${template.discount}% discount!`,
         originalPrice: template.originalPrice,
         salePrice: salePrice.toFixed(2),
         discountPercentage: template.discount,
-        productUrl: `https://${platformName}.com/product/${Math.random().toString(36).substr(2, 9)}`,
-        affiliateUrl: `https://${platformName}.com/product/${Math.random().toString(36).substr(2, 9)}?tag=${trackingId}`,
+        productUrl: productUrl,
+        affiliateUrl: this.generateAffiliateLink(productUrl, platformName),
         imageUrl: `https://images.unsplash.com/photo-${Math.floor(Math.random() * 1000000000000)}?w=300&h=300`,
         category: template.category,
         platformId,
