@@ -6,6 +6,8 @@ import { TelegramService } from "./telegram";
 export class SchedulerService {
   private scraperJob?: cron.ScheduledTask;
   private dealPostingJob?: cron.ScheduledTask;
+  private postedDealsToday: Set<string> = new Set();
+  private lastResetDate: string | null = null;
 
   constructor(
     private storage: IStorage,
@@ -70,20 +72,34 @@ export class SchedulerService {
           continue;
         }
 
-        // Find deals that haven't been posted to this group recently
+        // Find deals that haven't been posted to this group today
+        const today = new Date().toDateString();
         const unpostedDeals = activeDeals.filter(deal => {
-          // Simple logic: post deals from the last hour
-          const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
-          return new Date(deal.createdAt || 0) > oneHourAgo;
+          const dealKey = `${group.id}-${deal.id}-${today}`;
+          return !this.postedDealsToday.has(dealKey);
         });
 
         if (unpostedDeals.length > 0) {
+          // Reset daily tracker if it's a new day
+          if (!this.lastResetDate || this.lastResetDate !== today) {
+            this.postedDealsToday.clear();
+            this.lastResetDate = today;
+            console.log(`🔄 AGENT: Reset daily deal tracker for ${today}`);
+          }
+
           // Post one random deal
           const randomDeal = unpostedDeals[Math.floor(Math.random() * unpostedDeals.length)];
           await this.telegramService.postDealToGroup(randomDeal.id, group.id);
           
+          // Mark this deal as posted today for this group
+          const dealKey = `${group.id}-${randomDeal.id}-${today}`;
+          this.postedDealsToday.add(dealKey);
+          console.log(`✅ AGENT: Deal "${randomDeal.title}" marked as posted to ${group.name} for today`);
+          
           // Add some delay between posts
           await new Promise(resolve => setTimeout(resolve, 2000));
+        } else {
+          console.log(`📋 AGENT: No new deals to post to ${group.name} today - all deals already posted`);
         }
       } catch (error) {
         console.error(`Failed to post deal to group ${group.name}:`, error);
